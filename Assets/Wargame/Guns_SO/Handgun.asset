@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6feb809f3b14361960b4f3711bab1cf, type: 3}
+  m_Name: Handgun
+  m_EditorClassIdentifier: 
+  weaponName: Handgun
+  weaponStyle: 0
+  shootingType: 0
+  magMaxCount: 3
+  magSize: 12
+  fireRate: 0.1
+  reloadTime: 1
+  damage: 10
+  headshotMultiplier: 1.5
+  fireCount: 1
+  delayBetweenFire: 0
+  customAmmoConsume: 0
+  spread: 3
+  moveSpeedMultiplier: 1
+  canAim: 1
+  aimPosition: {x: 0, y: -0.3, z: 0.5}
+  aimMoveSpeedMultiplier: 0.7
+  aimSpeed: 0.1
+  aimFOV: 60
+  aimSpread: 1
+  muzzleFX: {fileID: 3868659819749819460, guid: 47f53c42b5019514a8c579eb17bea8c0,
+    type: 3}
+  hitFX: {fileID: 3277657305992631341, guid: 507250502f0f33d4e8e9d72caaa639c0, type: 3}
+  shootSFX: {fileID: 8300000, guid: 65102667f28946642b1d614e6fe6fa39, type: 3}
+  drySFX: {fileID: 8300000, guid: a6e695a508170a74189c72354f2f3584, type: 3}
+  reloadSFX: {fileID: 8300000, guid: b6999c530e6ef5544adac859bcca4252, type: 3}
