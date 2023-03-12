@@ -35,7 +35,8 @@ namespace Week6.BoxGame
                 population.Add(go);
             }
             
-            Invoke("RunGeneration", .1f);//0.1초느리게 에이전트 코드에있는 스타트함수는 더 늦게 실행 되기 때문에 골같은 정보를 받아오기 위해 조금의 시간 지연을 줌
+            Invoke("RunGeneration", .1f);
+            //0.1초느리게 에이전트 코드에있는 스타트함수는 더 늦게 실행 되기 때문에 골같은 정보를 받아오기 위해 조금의 시간 지연을 줌
         }
 
         public void RunGeneration()
@@ -68,7 +69,7 @@ namespace Week6.BoxGame
                 BoxAgent b = Selection();
 
                 BoxAgent child = Crossover(a, b);
-                child.Mutate(0.08f);//8퍼센트로 변이르ㅡㄹ 일으ㅋ미
+                child.Mutate(0.08f);//8퍼센트로 변이를 일으키는 것을 볼수 있음
                 newPopulation.Add(child);
             }
 
@@ -81,7 +82,7 @@ namespace Week6.BoxGame
             RunGeneration();
         }
 
-        public BoxAgent Selection()
+        public BoxAgent Selection()//선택
         {
             for (int i = 0; i < agentCount; i++)
                 if (Random.Range(0f, 1f) < population[i].Fitness / _totalFitness)

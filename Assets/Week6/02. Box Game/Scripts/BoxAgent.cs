@@ -39,7 +39,7 @@ namespace Week6.BoxGame
             StartCoroutine(MoveGenes());
         }
 
-        IEnumerator MoveGenes()//
+        IEnumerator MoveGenes()//이동 방향
         {
             for (int i = 0; i < Genes.Length; i++)
             {

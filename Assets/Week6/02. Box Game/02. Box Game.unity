@@ -157,8 +157,8 @@ MonoBehaviour:
     type: 3}
   goal: {fileID: 385508925}
   population: []
-  maxBehaviors: 200
-  waitSeconds: 0.05
+  maxBehaviors: 10
+  waitSeconds: 1
   generationTimeout: 0
 --- !u!4 &114561939
 Transform:
