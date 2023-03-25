@@ -972,8 +972,8 @@ MonoBehaviour:
   moveSpeed: 80
   workingLocations: []
   basePos: {fileID: 609537461}
-  populationSize: 150
-  maxRepeat: 3000
+  populationSize: 100
+  maxRepeat: 1000
   delayBeforeStart: 1
   bestFitness: 
 --- !u!4 &851552668

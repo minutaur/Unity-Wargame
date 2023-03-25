@@ -76,6 +76,7 @@ namespace Week8
             {
                 _character.Move((basePos.position - transform.position).normalized *
                                 (moveSpeed * Time.deltaTime));
+                transform.forward = (basePos.position - transform.position).normalized;
                 yield return null;
             }
 
@@ -140,14 +141,13 @@ namespace Week8
 
         void Generation()
         {
-
             List<int[]> newPopulation = new List<int[]>(populationSize);
             for (int i = 0; i < populationSize; i++)
             {
                 int parentA = Select(10);
                 int parentB = Select(10);
                 int[] newGenes = Crossover(population[parentA], population[parentB]);
-                if (Random.Range(0f, 1f) < 0.04f)
+                if (Random.Range(0f, 1f) < 0.01f)
                 {
                     int a = Random.Range(0, _locCount);
                     int b = Random.Range(0, _locCount);
@@ -156,15 +156,17 @@ namespace Week8
                 }
                 newPopulation.Add(newGenes);
             }
+
+            population = newPopulation;
         }
 
         int CalcFitness(int[] genes)
         {
-            int fitness = (int)Vector3.Distance(workingLocations[0], workingLocations[^1]);
+            int fitness = (int)Vector3.Distance(workingLocations[genes[0]], workingLocations[genes[^1]]);
             
             for (int i = 1; i < _locCount; i++)
             {
-                fitness += (int)Vector3.Distance(workingLocations[i], workingLocations[i - 1]);
+                fitness += (int)Vector3.Distance(workingLocations[genes[i]], workingLocations[genes[i - 1]]);
             }
 
             return -fitness;
@@ -194,16 +196,17 @@ namespace Week8
 
             int[] child = new int[_locCount];
             int childLen = 0;
-            
+
             for (int i = pointA; i <= pointB; i++)
                 child[childLen++] = a[i];
 
             for (int i = 0; i < _locCount; i++)
                 if (!child.Contains(b[i]))
-                    child[childLen++] = a[i];
+                    child[childLen++] = b[i];
 
             return child;
         }
+
         static void Shuffle<T>(T[] list)
         {
             for (int i = 0; i < list.Length; i++)
