@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6feb809f3b14361960b4f3711bab1cf, type: 3}
+  m_Name: Gun Config
+  m_EditorClassIdentifier: 
+  weaponName: lsj
+  weaponStyle: 0
+  shootingType: 0
+  magMaxCount: 100
+  magSize: 100
+  fireRate: 100
+  reloadTime: 1
+  damage: 1
+  headshotMultiplier: 2
+  fireCount: 1
+  delayBetweenFire: 0
+  customAmmoConsume: 0
+  spread: 0
+  moveSpeedMultiplier: 1
+  canAim: 1
+  aimPosition: {x: 0, y: 0, z: 0}
+  aimMoveSpeedMultiplier: 1
+  aimSpeed: 0.2
+  aimFOV: 60
+  aimSpread: 10
+  muzzleFX: {fileID: 3868659819749819460, guid: 47f53c42b5019514a8c579eb17bea8c0,
+    type: 3}
+  hitFX: {fileID: 3277657305992631341, guid: 507250502f0f33d4e8e9d72caaa639c0, type: 3}
+  shootSFX: {fileID: 0}
+  drySFX: {fileID: 0}
+  reloadSFX: {fileID: 0}

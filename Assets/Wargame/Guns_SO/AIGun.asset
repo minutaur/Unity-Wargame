@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6feb809f3b14361960b4f3711bab1cf, type: 3}
+  m_Name: AIGun
+  m_EditorClassIdentifier: 
+  weaponName: 
+  weaponStyle: 0
+  shootingType: 1
+  magMaxCount: 99
+  magSize: 20
+  fireRate: 0.4
+  reloadTime: 2
+  damage: 6
+  headshotMultiplier: 1.2
+  fireCount: 1
+  delayBetweenFire: 0
+  customAmmoConsume: 0
+  spread: 5
+  moveSpeedMultiplier: 1
+  canAim: 0
+  aimPosition: {x: 0, y: 0, z: 0}
+  aimMoveSpeedMultiplier: 1
+  aimSpeed: 0.2
+  aimFOV: 60
+  aimSpread: 0
+  muzzleFX: {fileID: 3868659819749819460, guid: 47f53c42b5019514a8c579eb17bea8c0,
+    type: 3}
+  hitFX: {fileID: 3277657305992631341, guid: 507250502f0f33d4e8e9d72caaa639c0, type: 3}
+  shootSFX: {fileID: 8300000, guid: 31ea6c5495890634f8f47bfb95e7a8f7, type: 3}
+  drySFX: {fileID: 8300000, guid: a6e695a508170a74189c72354f2f3584, type: 3}
+  reloadSFX: {fileID: 8300000, guid: 72b05b9fc2241d649b30a89d087ee5a6, type: 3}

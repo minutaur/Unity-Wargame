@@ -24,14 +24,14 @@ MonoBehaviour:
   fireCount: 3
   delayBetweenFire: 0.05
   customAmmoConsume: 0
-  spread: 5
+  spread: 3
   moveSpeedMultiplier: 1
   canAim: 1
   aimPosition: {x: 0, y: -0.3, z: 0.5}
   aimMoveSpeedMultiplier: 0.6
   aimSpeed: 0.1
   aimFOV: 60
-  aimSpread: 1
+  aimSpread: 0.5
   muzzleFX: {fileID: 3868659819749819460, guid: 47f53c42b5019514a8c579eb17bea8c0,
     type: 3}
   hitFX: {fileID: 3277657305992631341, guid: 507250502f0f33d4e8e9d72caaa639c0, type: 3}

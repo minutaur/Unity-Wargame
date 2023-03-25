@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Wargame.WeaponSystem;
 
 namespace Wargame.PlayerSystem
 {
-    [RequireComponent(typeof(CharacterController), typeof(WargameInput))]
+    [RequireComponent(typeof(CharacterController), typeof(WargameInput), typeof(Entity))]
     public class PlayerController : MonoBehaviour
     {
+        #region Public Fields
+        public int team = -1;
         [Header("Stats")]
         public float moveSpeed = 3.0f;
 
@@ -29,7 +33,9 @@ namespace Wargame.PlayerSystem
 
         [Header("Camera")]
         public GameObject cameraTarget;
+        #endregion
 
+        #region Private Fields
         private float _cinemachineTargetPitch;
         
         private float _speed;
@@ -37,17 +43,15 @@ namespace Wargame.PlayerSystem
 
         private float _fallTimeoutDelta;
         private int _prevSelectedNum = 0;
-        
-        private int _animIDSpeed;
-        private int _animIDJump;
-
-        private Animator _animator;
         private CharacterController _controller;
         private WargameInput _input;
         private PlayerWeaponManager _weapon;
         private GameObject _cam;
+        private Entity _playerEntity;
 
         private Vector3 _moveDir;
+        public bool _canMove;
+        #endregion
 
         private void Awake()
         {
@@ -55,22 +59,26 @@ namespace Wargame.PlayerSystem
             {
                 _cam = GameObject.FindGameObjectWithTag("MainCamera");
             }
+            _controller = GetComponent<CharacterController>();
+            _input = GetComponent<WargameInput>();
+            _weapon = GetComponent<PlayerWeaponManager>();
+            _playerEntity = GetComponent<Entity>();
+
+            _playerEntity.team = team;
+
+            _fallTimeoutDelta = fallTimeout;
         }
 
         private void Start()
         {
-            _animator = GetComponentInChildren<Animator>();
-            _controller = GetComponent<CharacterController>();
-            _input = GetComponent<WargameInput>();
-            _weapon = GetComponent<PlayerWeaponManager>();
-
-            AssignAnimationIDs();
-            
-            _fallTimeoutDelta = fallTimeout;
+            _playerEntity.onDeath.AddListener(OnPlayerDeath);
+            PlayerHUDManager.inst.playerEntity = _playerEntity;
         }
 
         private void Update()
         {
+            if (!_canMove)
+                return;
             JumpAndGravity(); 
             GroundedCheck();
             Move();
@@ -87,11 +95,33 @@ namespace Wargame.PlayerSystem
             CameraRotation();
         }
 
-        private void AssignAnimationIDs()
+        public void OnPlayerDeath(Entity self)
         {
-            _animIDSpeed = Animator.StringToHash("Speed");
-            _animIDJump = Animator.StringToHash("Jump");
+            _canMove = false;
+            _weapon.current.gameObject.SetActive(false);
+            _weapon.canShoot = false;
+            _playerEntity.curHealth = _playerEntity.maxHealth;
+            _playerEntity.isGodMode = true;
+            if (team >= 0)
+                GameManager.inst.teams[team].RespawnOnDeath(self);
         }
+
+        public void OnPlayerRespawn()
+        {
+            Invoke(nameof(UnFreeze), .1f);
+        }
+
+        void UnFreeze()
+        {
+            _canMove = true;
+            _weapon.current.gameObject.SetActive(true);
+            _weapon.canShoot = true;
+            _playerEntity.isGodMode = false;
+            PlayerHUDManager.inst.ChangeHealth(1);
+            _weapon.ResetInventory();
+        }
+
+        #region Movement
 
         private void JumpAndGravity()
         {
@@ -147,8 +177,7 @@ namespace Wargame.PlayerSystem
                 _speed = Mathf.Lerp(_speed, targetSpeed, Time.deltaTime * 10f);
             }
 
-            if (grounded)
-                _moveDir = transform.right * _input.move.x + transform.forward * _input.move.y;
+            _moveDir = transform.right * _input.move.x + transform.forward * _input.move.y;
 
             _controller.Move(_moveDir.normalized * (_weapon.current.moveSpeedMultiply * _speed * Time.deltaTime) +
                              new Vector3(0f, _verticalVelocity, 0f) * Time.deltaTime);
@@ -175,5 +204,6 @@ namespace Wargame.PlayerSystem
             if (lfAngle > 360f) lfAngle -= 360f;
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
+        #endregion
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -11,11 +13,12 @@ namespace Wargame.WeaponSystem
         public GunSystem_SO gun;
         public Transform firePos;
         public Entity gunHolder;
-        public int currentMagCount { get; private set; }
-        public int currentMagSize { get; private set; }
+        public int currentMagCount;
+        public int currentMagSize;
         
         public float moveSpeedMultiply { get; private set; }
 
+        #region Private Fields
         private AudioSource _audio;
         private CinemachineImpulseSource _shakeSource;
 
@@ -28,10 +31,7 @@ namespace Wargame.WeaponSystem
         private bool _canShoot = true;
         private float _spread;
         private float _prevShootTime;
-
-        private float _shootProgress;
-        private float _shootProgressX;
-
+        #endregion
         private void Awake()
         {
             _audio = GetComponent<AudioSource>();
@@ -39,14 +39,18 @@ namespace Wargame.WeaponSystem
             _shakeSource = GetComponent<CinemachineImpulseSource>();
         }
 
-        void Start()
+        public void ResetGun()
         {
             currentMagCount = gun.magMaxCount;
             currentMagSize = gun.magSize;
             moveSpeedMultiply = gun.moveSpeedMultiplier;
             _spread = gun.spread;
-            _startPos = transform.localPosition;
             _gunTargetPos = _startPos;
+        }
+        void Start()
+        {
+            _startPos = transform.localPosition;
+            ResetGun();
         }
 
         void Update()
@@ -54,10 +58,10 @@ namespace Wargame.WeaponSystem
             HandleAimMotion();
         }
 
-        public void StartShoot()
+        public bool StartShoot()
         {
             if (_isAimReadying || _isReloading || !_canShoot || _isHolding && gun.shootingType == ShootingType.Press)
-                return;
+                return false;
             
             
 
@@ -66,7 +70,7 @@ namespace Wargame.WeaponSystem
                 if (!_isHolding)
                     _audio.PlayOneShot(gun.drySFX);
                 _isHolding = true;
-                return;
+                return false;
             }
             
             _isHolding = true;
@@ -91,6 +95,7 @@ namespace Wargame.WeaponSystem
                     break;
             }
             Invoke(nameof(EndShoot), gun.fireRate);
+            return true;
         }
 
         public void StopShoot()
@@ -104,7 +109,7 @@ namespace Wargame.WeaponSystem
             if (!gun.canAim)
                 return;
             
-            _spread = gun.aimSpread;
+            _spread = gun.aimSpread / 2f;
             moveSpeedMultiply = gun.aimMoveSpeedMultiplier;
 
             _gunTargetPos = gun.aimPosition;
@@ -116,7 +121,7 @@ namespace Wargame.WeaponSystem
             if (!gun.canAim)
                 return;
             
-            _spread = gun.spread;
+            _spread = gun.spread / 2f;
             moveSpeedMultiply = gun.moveSpeedMultiplier;
 
             _gunTargetPos = _startPos;
@@ -124,7 +129,7 @@ namespace Wargame.WeaponSystem
 
         public void StartReload()
         {
-            if (_isReloading || currentMagCount <= 0)
+            if (_isReloading || currentMagCount <= 0 || currentMagSize == gun.magSize)
                 return;
             _isReloading = true;
             currentMagCount--;
@@ -160,8 +165,7 @@ namespace Wargame.WeaponSystem
             if (gun.customAmmoConsume == 0)
                 currentMagSize--;
 
-            Vector3 spreadDir = Quaternion.Euler(Random.Range(-_spread, _spread),
-                Random.Range(-_spread, _spread), Random.Range(-_spread, _spread)) * gunHolder.head.forward;
+            Vector3 spreadDir = Quaternion.Euler(0, Random.Range(-_spread, _spread), Random.Range(-_spread, _spread)) * gunHolder.head.forward;
 
             if (gun.muzzleFX)
             {
@@ -169,13 +173,28 @@ namespace Wargame.WeaponSystem
                 muzzleFX.transform.forward = firePos.forward;
                 Destroy(muzzleFX, 0.5f);
             }
-            
-            if (Physics.Raycast(gunHolder.head.position, spreadDir, out var hit, Mathf.Infinity))
+
+            RaycastHit[] hits = Physics.RaycastAll(gunHolder.head.position, spreadDir, 50f);
+            if (hits.Length > 0)
             {
+                RaycastHit hit = default;
+                Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
+                foreach (var h in hits)
+                {
+                    hit = h;
+                    Entity targetEntity = h.collider.GetComponentInParent<Entity>();
+                    if (targetEntity && targetEntity.team == gunHolder.team)
+                        continue;
+                    if (h.collider.GetComponent<Sector>())
+                        continue;
+                    
+                    break;
+                }
+
                 if (gun.hitFX)
                 {
                     GameObject hitFX = Instantiate(gun.hitFX);
-                    hitFX.transform.position = hit.point;
+                    hitFX.transform.position = hit.point + hit.normal * 0.1f;
                     hitFX.transform.up = hit.normal;
                     Destroy(hitFX, 0.5f);
                 }
@@ -184,7 +203,7 @@ namespace Wargame.WeaponSystem
                 
                 if (e)
                 {
-                    e.ApplyDamage(hit.collider.CompareTag("Head") ? (int)(gun.damage * gun.headshotMultiplier) : gun.damage);
+                    e.ApplyDamage(hit.collider.CompareTag("Head") ? (int)(gun.damage * gun.headshotMultiplier) : gun.damage, gunHolder);
                 }
             }
         }
@@ -199,7 +218,7 @@ namespace Wargame.WeaponSystem
 
                 if (e)
                 {
-                    e.ApplyDamage(gun.damage);
+                    e.ApplyDamage(gun.damage, gunHolder);
                 }
             }
             if (gun.hitFX)
@@ -208,7 +227,7 @@ namespace Wargame.WeaponSystem
                 if (Physics.Raycast(ray, out var hit, 5f))
                 {
                     GameObject hitFX = Instantiate(gun.hitFX); 
-                    hitFX.transform.position = hit.point;
+                    hitFX.transform.position = hit.point + hit.normal * 0.1f;
                     hitFX.transform.up = hit.normal;
                     Destroy(hitFX, 0.5f);
                 }

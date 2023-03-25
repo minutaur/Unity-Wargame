@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Wargame.PlayerSystem;
 using Wargame.WeaponSystem;
 
-namespace WargameSystem
+namespace Wargame
 {
     public class Sector : MonoBehaviour
     {
@@ -16,7 +17,7 @@ namespace WargameSystem
 
         public UnityEvent<int> onConquer, onLost;
 
-        private int tryOwningTeam = -1;
+        public int tryOwningTeam = -1;
 
         public void Update()
         {
@@ -81,6 +82,8 @@ namespace WargameSystem
                 Entity e = other.GetComponent<Entity>();
                 if (e.team >= 0)
                     teamCount[e.team]++;
+                if (other.GetComponent<PlayerController>())
+                    PlayerHUDManager.inst.SetSector(this);
                 CheckTeamCanOwn(e.team);
             }
         }
@@ -92,6 +95,9 @@ namespace WargameSystem
                 Entity e = other.GetComponent<Entity>();
                 if (e.team >= 0)
                     teamCount[e.team]--;
+
+                if (other.GetComponent<PlayerController>())
+                    PlayerHUDManager.inst.UnsetSector();
                 CheckTeamCanOwn(e.team);
             }
         }

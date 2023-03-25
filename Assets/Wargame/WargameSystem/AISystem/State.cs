@@ -8,24 +8,3 @@ namespace Wargame.AISystem
         public abstract State Run();
     }
 }
-
-
-class Test : IComparable
-{
-    private int value;
-    public bool CompareTo(object obj)
-    {
-        if (obj is Test)
-        {
-            Test other = obj as Test;
-            return value == other.value;
-        }
-
-        return false;
-    }
-}
-
-public interface IComparable
-{
-    bool CompareTo(object obj);
-}

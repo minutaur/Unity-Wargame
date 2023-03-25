@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace WargameSystem
+namespace Wargame
 {
     public class GameUIManager : MonoBehaviour
     {

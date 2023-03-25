@@ -2,26 +2,42 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.Events;
+using Wargame.AISystem;
+using Wargame.PlayerSystem;
+using Wargame.WeaponSystem;
 
-namespace WargameSystem
+namespace Wargame
 {
     public class GameManager : MonoBehaviour
     {
+        public static GameManager inst;
         public int defaultLife = 100;
-        [FormerlySerializedAs("teamSize")] public int teamPlayerCount = 8;
+        public int teamPlayerCount = 8;
         public int gameTime = 600;
 
         public float lifeLossTime = 6f;
         public List<Team> teams;
         public Sector[] sectors;
         public bool isGameRunning;
-
-        private GameUIManager _gameUI;
         
-        void Start()
+        private GameUIManager _gameUI;
+
+        private void Awake()
         {
+            if (!inst)
+            {
+                inst = this;
+            }
             _gameUI = FindObjectOfType<GameUIManager>();
+        }
+
+        private void Start()
+        {
+            // 이 부분은 싱글플레이용으로 임시로 만든 것이므로 수정해야함
+            PlayerController player = FindObjectOfType<PlayerController>();
+            teams[player.team].AddPlayer(player.GetComponent<Entity>());
+            
             InitGame();
         }
 
@@ -45,13 +61,16 @@ namespace WargameSystem
             teams[team].owningSectors--;
         }
 
-        public void InitGame()
+        private void InitGame()
         {
+            int index = 0;
             foreach (var team in teams)
             {
                 team.life = defaultLife;
                 team.playerCount = teamPlayerCount;
                 team.owningSectors = 0;
+                team.teamIndex = index++;
+                team.InitTeam();
             }
             sectors = FindObjectsOfType<Sector>();
             foreach (var sector in sectors)
@@ -63,6 +82,17 @@ namespace WargameSystem
                 
                 sector.onConquer.AddListener(OnConquerSector);
                 sector.onLost.AddListener(OnLostSector);
+            }
+
+            foreach (var t in teams)
+            {
+                foreach (var e in t.players)
+                {
+                    if (e.TryGetComponent(out AIController ai))
+                    {
+                        ai.AfterGameInit();
+                    }
+                }
             }
 
             isGameRunning = true;

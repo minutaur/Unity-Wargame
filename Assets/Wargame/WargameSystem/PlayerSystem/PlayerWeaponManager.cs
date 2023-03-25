@@ -17,6 +17,7 @@ namespace Wargame.PlayerSystem
         private bool _wasAim;
         private float _defaultFOV;
         private float _currentFOVSpeed;
+        public bool canShoot;
 
         private void Start()
         {
@@ -31,6 +32,14 @@ namespace Wargame.PlayerSystem
             }
 
             _selfEntity.onDamaged.AddListener(OnDamaged_UpdateUI);
+        }
+
+        public void ResetInventory()
+        {
+            foreach (var gun in inventory)
+            {
+                gun.ResetGun();
+            }
         }
 
         public void OnDamaged_UpdateUI()
@@ -53,7 +62,7 @@ namespace Wargame.PlayerSystem
 
         private void Update()
         {
-            if (inventory.Count == 0)
+            if (!canShoot || inventory.Count == 0)
                 return;
 
             PlayerHUDManager.inst.ChangeAmmo(current.currentMagCount * current.gun.magSize, current.currentMagSize);

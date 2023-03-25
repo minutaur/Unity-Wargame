@@ -24,7 +24,7 @@ MonoBehaviour:
   fireCount: 1
   delayBetweenFire: 0
   customAmmoConsume: 0
-  spread: 5
+  spread: 4
   moveSpeedMultiplier: 1
   canAim: 1
   aimPosition: {x: 0, y: -0.25, z: 0.5}
