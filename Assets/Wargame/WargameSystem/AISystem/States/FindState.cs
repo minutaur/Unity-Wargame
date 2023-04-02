@@ -3,7 +3,7 @@ using UnityEngine;
 using Wargame.WeaponSystem;
 
 namespace Wargame.AISystem
-{
+{//적이 구 모양의 탐색 영역에 들어와있고 시야 내에 있다면
     public class FindState : State
     {
         public CombatState combatState;
@@ -35,7 +35,7 @@ namespace Wargame.AISystem
                     _isChasing = false;
                 }
             }
-
+            //점령할지역이 없으면 랜덤한 적을 목표로 이동하여 싸움이 일어나도록 유도
             if (!_isChasing && _isMoving && (!_foundSector || _foundSector.owningTeam == _control.entity.team))
             {
                 List<Sector> foundSectors = new List<Sector>();

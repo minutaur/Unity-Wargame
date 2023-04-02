@@ -2,7 +2,7 @@
 using Wargame.WeaponSystem;
 
 namespace Wargame.AISystem
-{
+{//전투
     public class CombatState : State
     {
         public FindState findState;
